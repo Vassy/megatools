@@ -56,10 +56,24 @@ AC_SUBST(NETTLE_CFLAGS)
 AC_SUBST(NETTLE_LIBS)
 
 # check fuse
-PKG_CHECK_MODULES(FUSE, [$FUSE_REQUIRES], [enable_fuse=yes], [enable_fuse=no])
-AM_CONDITIONAL([ENABLE_FUSE], [test x$enable_fuse = xyes])
-AC_SUBST(FUSE_CFLAGS)
-AC_SUBST(FUSE_LIBS)
+AC_ARG_WITH([fuse],
+  AS_HELP_STRING([--without-fuse], [Ignore presence of fuse and disable it]))
+
+AS_IF([test "x$with_fuse" != "xno"],
+  [PKG_CHECK_MODULES(FUSE, [$FUSE_REQUIRES], [ENABLE_FUSE=yes], [ENABLE_FUSE=no])],
+  [ENABLE_FUSE=no])
+
+AS_IF([test "x$ENABLE_FUSE" = "xyes"],
+  [
+    AC_SUBST(FUSE_CFLAGS)
+    AC_SUBST(FUSE_LIBS)
+  ],
+    [AS_IF([test "x$with_fuse" = "xyes"],
+      [AC_MSG_ERROR([fuse support requested but not found])
+    ])
+])
+
+AM_CONDITIONAL([ENABLE_FUSE], [test "x$ENABLE_FUSE" = "xyes"])
 
 # check if we can build tests
 PKG_CHECK_MODULES(GLIBTESTS, [glib-2.0 >= 2.34.0], [enable_tests=yes], [enable_tests=no])
