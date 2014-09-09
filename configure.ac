@@ -118,7 +118,7 @@ Configured features:
 
   docs build: $enable_docs_build
   warnings: $enable_warnings
-  megafs: $enable_fuse (requires fuse)
+  megafs: $with_fuse (requires fuse)
   tests: $enable_tests (requires glib-2.0 >= 2.34.0)
 
 Run make now.
